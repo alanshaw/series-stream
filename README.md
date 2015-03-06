@@ -13,7 +13,7 @@ var ss = createSeriesStream()
 var file1 = '/path/to/file1'
 var file2 = '/path/to/file2'
 var file3 = '/path/to/file3'
-var outfile = 'path/to/outfile'
+var outfile = '/path/to/outfile'
 
 // Add streams in the order you want them to pipe out
 ss.add(fs.createReadStream(file3))

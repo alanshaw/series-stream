@@ -1,4 +1,4 @@
-# series-stream
+# series-stream [![Build Status](https://travis-ci.org/alanshaw/series-stream.svg?branch=master)](https://travis-ci.org/alanshaw/series-stream)
 
 Pipe multiple streams into a single stream, ensuring each added stream finishes piping it's data before the next begins.
 

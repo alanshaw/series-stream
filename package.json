@@ -22,9 +22,6 @@
     "istanbul": "^0.3.7",
     "tape": "^3.5.0"
   },
-  "dependencies": {
-    "duplexer": "^0.1.1"
-  },
   "directories": {
     "test": "test"
   },

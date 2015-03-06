@@ -1,40 +1,38 @@
 var PassThrough = require('stream').PassThrough
 var inherits = require('util').inherits
 
-function Queue () {
+function SeriesStream () {
   PassThrough.apply(this, arguments)
   this._current = null
   this._queue = []
-  this.on('pipe', this._onPipe.bind(this))
 }
-inherits(Queue, PassThrough)
+inherits(SeriesStream, PassThrough)
 
-Queue.prototype._onPipe = function (src) {
-  if (!this._current) {
-    this._current = src
-    return src.once('end', this._resumeNext.bind(this))
-  }
-
-  // No idea, we have to unpipe on the next tick for this to work
-  process.nextTick(function () {
-    src.unpipe(this)
-    this._queue.push(src)
-  }.bind(this))
+SeriesStream.prototype.pipe = function (dest) {
+  PassThrough.prototype.pipe.call(this, dest)
+  this._next()
 }
 
-Queue.prototype._resumeNext = function () {
+SeriesStream.prototype.add = function (src) {
+  this._queue.push(src)
+}
+
+SeriesStream.prototype._next = function () {
   this._current = null
   if (!this._queue.length) return
-  this._queue.shift().pipe(this)
+  var next = this._queue.shift()
+  this._current = next
+  next.once('end', this._next.bind(this))
+  next.pipe(this)
 }
 
-Queue.prototype.end = function () {
-  if (this._queue.length) return
+SeriesStream.prototype.end = function () {
+  if (this._current) return // Only end when all streams have ended
   PassThrough.prototype.end.apply(this, arguments)
 }
 
 module.exports = function (opts) {
-  return new Queue(opts)
+  return new SeriesStream(opts)
 }
 
-module.exports.Queue = Queue
+module.exports.SeriesStream = SeriesStream

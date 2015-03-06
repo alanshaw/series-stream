@@ -18,6 +18,13 @@ SeriesStream.prototype.on = function (ev, fn) {
   return res
 }
 
+SeriesStream.prototype.pipe = function (dest) {
+  PassThrough.prototype.pipe.call(this, dest)
+  if (!this._current) {
+    this._next()
+  }
+}
+
 SeriesStream.prototype.add = function (src) {
   this._queue.push(src)
 }

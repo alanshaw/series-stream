@@ -1,6 +1,6 @@
 {
   "name": "series-stream",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Pipe multiple streams into a single stream, ensuring each added stream finishes piping it's data before the next begins.",
   "main": "index.js",
   "scripts": {

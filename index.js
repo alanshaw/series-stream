@@ -8,9 +8,14 @@ function SeriesStream () {
 }
 inherits(SeriesStream, PassThrough)
 
-SeriesStream.prototype.pipe = function (dest) {
-  PassThrough.prototype.pipe.call(this, dest)
-  this._next()
+SeriesStream.prototype.on = function (ev, fn) {
+  var res = PassThrough.prototype.on.call(this, ev, fn)
+
+  if (ev === 'data' && !this._current) {
+    this._next()
+  }
+
+  return res
 }
 
 SeriesStream.prototype.add = function (src) {

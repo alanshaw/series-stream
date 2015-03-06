@@ -23,8 +23,6 @@ test('Maintains ordering', function (t) {
   var rs3 = fs.createReadStream(path3)
   var rs4 = new Readable()
 
-  rs4.id = 4
-
   rs4._read = function () {
     this.push(content4)
     this.push(null)
@@ -40,4 +38,32 @@ test('Maintains ordering', function (t) {
     //t.ok(false)
     t.end()
   }))
+})
+
+test('Starts flowing when consumer listens for data events', function (t) {
+  t.plan(1)
+
+  var ss = new SeriesStream()
+
+  var rs1 = fs.createReadStream(path1)
+  var rs2 = fs.createReadStream(path2)
+  var rs3 = fs.createReadStream(path3)
+  var rs4 = new Readable()
+
+  rs4._read = function () {
+    this.push(content4)
+    this.push(null)
+  }
+
+  ss.add(rs2)
+  ss.add(rs1)
+  ss.add(rs4)
+  ss.add(rs3)
+
+  ss.on('data', function (data) { })
+
+  ss.on('end', function () {
+    t.ok(true, 'Series stream ended')
+    t.end()
+  })
 })

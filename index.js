@@ -20,13 +20,17 @@ SeriesStream.prototype.on = function (ev, fn) {
 
 SeriesStream.prototype.pipe = function (dest) {
   PassThrough.prototype.pipe.call(this, dest)
+
   if (!this._current) {
     this._next()
   }
+
+  return dest
 }
 
 SeriesStream.prototype.add = function (src) {
   this._queue.push(src)
+  return this
 }
 
 SeriesStream.prototype._next = function () {
@@ -40,7 +44,7 @@ SeriesStream.prototype._next = function () {
 
 SeriesStream.prototype.end = function () {
   if (this._current) return // Only end when all streams have ended
-  PassThrough.prototype.end.apply(this, arguments)
+  return PassThrough.prototype.end.apply(this, arguments)
 }
 
 module.exports = function (opts) {
